@@ -1,7 +1,7 @@
 module Lang where
 
 data Re
-  = Ept       -- ∅
+  = Nil       -- ∅
   | Eps       -- ε
   | Dot       -- .
   | Sym Char  -- a
