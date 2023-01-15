@@ -19,3 +19,15 @@ may r = Alt r Eps
 -- r+ == rr*
 pls :: Re -> Re
 pls r = Seq r (Str r)
+
+-- r = s == (r&s)|(!r&!s)
+iff :: Re -> Re -> Re
+iff r s = Alt (And r s) (And (Not r) (Not s))
+
+-- r ^ s == !(r=s)
+xor :: Re -> Re -> Re
+xor r s = Not (iff r s)
+
+-- r > s == !r|s
+imp :: Re -> Re -> Re
+imp r s = Alt (Not r) s

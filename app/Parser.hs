@@ -4,8 +4,11 @@ import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
 import Lang
 
-reserved :: [Char]
-reserved = "().*+?!&|\\"
+parseRegex :: String -> Either ParseError Re
+parseRegex = parse (parser <* eof) ""
+
+reserved :: String
+reserved = "().*+?!&|^=>\\"
 
 parser :: Parser Re
 parser = buildExpressionParser table lit
@@ -21,6 +24,10 @@ table =
       ]  
     , [ Infix   (Alt <$ char '|') AssocLeft
       , Infix   (And <$ char '&') AssocLeft
+      , Infix   (xor <$ char '^') AssocLeft
+      ]
+    , [ Infix   (iff <$ char '=') AssocLeft
+      , Infix   (imp <$ char '>') AssocLeft
       ]
     ]
 
