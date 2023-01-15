@@ -30,3 +30,9 @@ deriv c re = case re of
   Str r         -> Seq (dc r) (Str r)
   where
     dc = deriv c
+
+-- Check if a string matches a regular expression
+matches :: String -> Re -> Bool
+matches str r = case str of
+  []  -> δ r                   -- matches empty string?
+  a:w -> matches w $ deriv a r -- match to the derivative
