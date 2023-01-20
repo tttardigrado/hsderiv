@@ -1,5 +1,7 @@
 module Lang where
 
+import Text.Printf (printf)
+
 data Re
   = Nil       -- ∅
   | Eps       -- ε
@@ -10,7 +12,18 @@ data Re
   | And Re Re -- r & s
   | Not Re    -- ¬r
   | Str Re    -- r*
-  deriving (Show, Eq)
+
+instance Show Re where
+  show re = case re of
+    Nil -> "∅"
+    Eps -> "ε"
+    Dot -> "."
+    Sym c -> [c]
+    Seq r s -> "(" ++ show r ++ show s ++ ")"
+    Alt r s -> "(" ++ show r ++ "|" ++ show s ++ ")"
+    And r s -> "(" ++ show r ++ "&" ++ show s ++ ")"
+    Not r -> "!" ++ show r
+    Str r -> show r ++ "*"
 
 -- ∅|a == a   a|∅ == a
 rAlt :: Re -> Re -> Re

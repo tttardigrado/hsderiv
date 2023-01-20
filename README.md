@@ -4,6 +4,11 @@
 
 Haskell implementation of Brzozowski derivatives for regular expressions.
 
+## Technologies
+* Haskell
+* Parsec
+* Haskeline
+
 ## References
 
 ### Papers
