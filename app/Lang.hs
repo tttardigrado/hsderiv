@@ -1,7 +1,5 @@
 module Lang where
 
-import Data.Char (ord, chr)
-
 data Re
   = Nil       -- ∅
   | Eps       -- ε
@@ -14,26 +12,58 @@ data Re
   | Str Re    -- r*
   deriving (Show, Eq)
 
+-- ∅|a == a   a|∅ == a
+rAlt :: Re -> Re -> Re
+rAlt Nil r = r
+rAlt r Nil = r
+rAlt r s   = Alt r s
+
+-- ∅&a == ∅   a&∅ == ∅
+rAnd :: Re -> Re -> Re
+rAnd Nil _ = Nil
+rAnd _ Nil = Nil
+rAnd r s   = And r s
+
+-- ∅a == ∅   a∅ == ∅   εa == a   aε == a
+rSeq :: Re -> Re -> Re
+rSeq Nil _ = Nil
+rSeq _ Nil = Nil
+rSeq Eps r = r
+rSeq r Eps = r
+rSeq r s   = Seq r s
+
+-- (r*)* == r*   ∅* == ε   ε* == ε
+rStr :: Re -> Re
+rStr Eps = Eps
+rStr Nil = Eps
+rStr (Str r) = rStr r
+rStr r       = Str r
+
+-- !(!r) == r
+rNot :: Re -> Re
+rNot (Not r) = r
+rNot r       = Not r
+
 -- r? == r|ε
-may :: Re -> Re
-may r = Alt r Eps
+rMay :: Re -> Re
+rMay r = rAlt r Eps
 
 -- r+ == rr*
-pls :: Re -> Re
-pls r = Seq r (Str r)
+rPls :: Re -> Re
+rPls r = rSeq r (rStr r)
 
 -- r = s == (r&s)|(!r&!s)
-iff :: Re -> Re -> Re
-iff r s = Alt (And r s) (And (Not r) (Not s))
+rIff :: Re -> Re -> Re
+rIff r s = rAlt (rAnd r s) (rAnd (rNot r) (rNot s))
 
 -- r ^ s == !(r=s)
-xor :: Re -> Re -> Re
-xor r s = Not (iff r s)
+rXor :: Re -> Re -> Re
+rXor r s = rNot (rIff r s)
 
 -- r > s == !r|s
-imp :: Re -> Re -> Re
-imp r s = Alt (Not r) s
+rImp :: Re -> Re -> Re
+rImp r s = rAlt (rNot r) s
 
-
-rng :: Char -> Char -> Re
-rng a b = foldr (Alt . Sym) Nil [a..b]
+-- [a-z] == (a|b|...|z)
+rRng :: Char -> Char -> Re
+rRng a b = foldr (rAlt . Sym) Nil [a..b]

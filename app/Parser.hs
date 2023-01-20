@@ -15,20 +15,21 @@ parser = buildExpressionParser table pLit
 
 table :: [[Operator Char st Re]]
 table = 
-    [ [ Postfix (Str <$ char '*')
-      , Postfix (may <$ char '?')
-      , Postfix (pls <$ char '+')
-      , Prefix  (Not <$ char '!')
+    [ [ Postfix (rStr <$ char '*')
+      , Postfix (rMay <$ char '?')
+      , Postfix (rPls <$ char '+')
       ]
-    , [ Infix   (return Seq     ) AssocLeft
+    , [ Prefix  (rNot <$ char '!')
       ]
-    , [ Infix   (And <$ char '&') AssocLeft
+    , [ Infix   (return rSeq     ) AssocLeft
       ]
-    , [ Infix   (Alt <$ char '|') AssocLeft
+    , [ Infix   (rAnd <$ char '&') AssocLeft
       ]
-    , [ Infix   (xor <$ char '^') AssocLeft
-      , Infix   (iff <$ char '=') AssocLeft
-      , Infix   (imp <$ char '>') AssocLeft
+    , [ Infix   (rAlt <$ char '|') AssocLeft
+      ]
+    , [ Infix   (rXor <$ char '^') AssocLeft
+      , Infix   (rIff <$ char '=') AssocLeft
+      , Infix   (rImp <$ char '>') AssocLeft
       ]
     ]
 
@@ -56,4 +57,4 @@ pRng = do
   char '-'
   Sym b <- pSym
   char ']'
-  return $ rng a b
+  return $ rRng a b
