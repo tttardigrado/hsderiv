@@ -1,5 +1,7 @@
 module Lang where
 
+import Data.Char (ord, chr)
+
 data Re
   = Nil       -- ∅
   | Eps       -- ε
@@ -31,3 +33,7 @@ xor r s = Not (iff r s)
 -- r > s == !r|s
 imp :: Re -> Re -> Re
 imp r s = Alt (Not r) s
+
+
+rng :: Char -> Char -> Re
+rng a b = foldr (Alt . Sym) Nil [a..b]

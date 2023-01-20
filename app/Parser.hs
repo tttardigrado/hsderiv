@@ -8,10 +8,10 @@ parseRegex :: String -> Either ParseError Re
 parseRegex = parse (parser <* eof) ""
 
 reserved :: String
-reserved = "().*+?!&|^=>\\"
+reserved = "()[-].*+?!&|^=>\\"
 
 parser :: Parser Re
-parser = buildExpressionParser table lit
+parser = buildExpressionParser table pLit
 
 table :: [[Operator Char st Re]]
 table = 
@@ -32,17 +32,28 @@ table =
       ]
     ]
 
-lit :: Parser Re
-lit = sym <|> dot <|> paren
+pLit :: Parser Re
+pLit = pRng <|> pSym <|> pDot <|> pParen
 
-paren :: Parser Re
-paren = between (char '(') (char ')') parser
+pParen :: Parser Re
+pParen = between (char '(') (char ')') parser
 
-sym :: Parser Re
-sym = Sym <$> (symbols <|> escaped)
+pSym :: Parser Re
+pSym = Sym <$> (symbols <|> escaped)
   where
     escaped = char '\\' *> oneOf reserved
     symbols = noneOf reserved
 
-dot :: Parser Re
-dot = Dot <$ char '.'
+-- .
+pDot :: Parser Re
+pDot = Dot <$ char '.'
+
+-- [a-z] => (a|b|...|z)
+pRng :: Parser Re
+pRng = do
+  char '['
+  Sym a <- pSym
+  char '-'
+  Sym b <- pSym
+  char ']'
+  return $ rng a b
