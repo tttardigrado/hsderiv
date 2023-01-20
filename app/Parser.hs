@@ -21,12 +21,13 @@ table =
       , Prefix  (Not <$ char '!')
       ]
     , [ Infix   (return Seq     ) AssocLeft
-      ]  
-    , [ Infix   (Alt <$ char '|') AssocLeft
-      , Infix   (And <$ char '&') AssocLeft
-      , Infix   (xor <$ char '^') AssocLeft
       ]
-    , [ Infix   (iff <$ char '=') AssocLeft
+    , [ Infix   (And <$ char '&') AssocLeft
+      ]
+    , [ Infix   (Alt <$ char '|') AssocLeft
+      ]
+    , [ Infix   (xor <$ char '^') AssocLeft
+      , Infix   (iff <$ char '=') AssocLeft
       , Infix   (imp <$ char '>') AssocLeft
       ]
     ]
