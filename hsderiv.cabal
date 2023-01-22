@@ -21,18 +21,37 @@ maintainer:         gspteixeira@gmail.com
 -- category:
 extra-source-files: CHANGELOG.md
 
+library hsderiv-lib
+    exposed-modules:  Derivative
+                   ,  Lang
+                   ,  Parser
+    hs-source-dirs:   app
+    build-depends:    base ^>=4.13
+                 ,    parsec
+    default-language: Haskell2010
+
 executable hsderiv
     main-is:          Main.hs
-
-    -- Modules included in this executable, other than Main.
+    build-depends:    base ^>=4.13
+                 ,    parsec
+                 ,    haskeline
+                 ,    hsderiv-lib
     other-modules:    Derivative
                  ,    Lang
                  ,    Parser
-
-    -- LANGUAGE extensions used by modules in this package.
-    -- other-extensions:
-    build-depends:    base ^>=4.13.0.0
-                 ,    parsec
-                 ,    haskeline
     hs-source-dirs:   app
+    other-extensions: PatternSynonyms
+    default-language: Haskell2010
+
+test-suite tests
+    type:             exitcode-stdio-1.0
+    main-is:          Test.hs
+    build-depends:    base ^>=4.13
+                 ,    parsec
+                 ,    hsderiv-lib
+    hs-source-dirs:   tests
+                  ,   app
+    other-modules:    Derivative
+                 ,    Lang
+                 ,    Parser
     default-language: Haskell2010
